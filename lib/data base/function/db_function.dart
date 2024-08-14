@@ -42,10 +42,8 @@ Future<void> addToFavorites(FavouriteDBModel favsong) async {
 }
 
 Future<bool> isSongInFavorites(String songId) async {
-  // Open the Hive box where favorite songs are stored
   final box = await Hive.box<FavouriteDBModel>('favorites');
 
-  // Check if the songId exists in the favorites box
   return box.containsKey(songId);
 }
 
@@ -82,7 +80,7 @@ ValueListenable<Box<RecentDBModel>> getrecentListenable() {
   return Hive.box<RecentDBModel>('recent').listenable();
 }
 
-// 1
+// mostly
 class SongPlayCounter {
   Map<String, int> _playCounts = {};
 
