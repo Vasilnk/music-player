@@ -1,70 +1,115 @@
-// // Add songs to the database
-// import 'package:hive/hive.dart';
-// import 'package:play_tune/data%20base/model/db_model.dart';
-
-// Future<void> addSongsToDataBase(List<SongDBModel> songs) async {
-//   final box = Hive.box<SongDBModel>('songs');
-//   await box.clear(); // Clear old entries
-//   for (var song in songs) {
-//     await box.add(song);
-//   }
-// }
-
-// // Get all songs from the database
-// List<SongDBModel> getAllSongs() {
-//   final box = Hive.box<SongDBModel>('songs');
-//   return box.values.toList();
-// }
-
-// 2
-
-import 'dart:typed_data';
-
-import 'package:hive/hive.dart';
-import 'package:play_tune/data%20base/model/db_model.dart';
+import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:play_tune/data%20base/model/db_fav_model.dart';
+import 'package:play_tune/data%20base/model/db_model.dart';
+import 'package:play_tune/data%20base/model/db_mostly_model.dart';
+import 'package:play_tune/data%20base/model/db_recent_model.dart';
+import 'package:play_tune/utils/trim_name.dart';
 
-// Load songs from phone and add to database
 final OnAudioQuery audioQuery = OnAudioQuery();
-Future<void> loadSongsFromPhone() async {
-  final audioSongs = await audioQuery.querySongs();
-  List<SongDBModel> songList = await Future.wait(audioSongs.map((song) async {
-    print("song data is ${song.data}");
-    final albumArt = await audioQuery.queryArtwork(song.id, ArtworkType.AUDIO);
-    return SongDBModel(
-      id: song.id,
-      title: song.title,
-      artist: song.artist ?? 'Unknown Artist',
-      albumArt: albumArt ?? Uint8List(0),
-      filePath: song.data,
+
+Future<List<SongDBModel>> loadSongs() async {
+  List<SongDBModel> songs = [];
+
+  final List<SongModel> fetchedSongs = await audioQuery.querySongs(
+    sortType: SongSortType.ALBUM,
+    orderType: OrderType.ASC_OR_SMALLER,
+    uriType: UriType.EXTERNAL,
+  );
+
+  final songBox = Hive.box<SongDBModel>('songs');
+  songs = fetchedSongs.map((song) {
+    final title = truncate(trimFileExtension(song.displayName), 20);
+    final artist = truncate(song.artist ?? 'Unknown Artist', 20);
+
+    final songModel = SongDBModel(
+      id: song.id.toString(),
+      title: title,
+      artist: artist,
+      filePath: song.uri!,
     );
-  }).toList());
-  // Limit to 300 songs
-  if (songList.length > 10) {
-    songList = songList.sublist(0, 10);
-  }
-  await addSongsToDataBase(songList); // Store songs in Hive
-  print(' audio songs ${audioSongs.length}');
-  print('songlist songs ${songList.length}');
-  audioSongs.clear();
-  songList.clear();
-  print('audio songs ${audioSongs.length}');
-  print('songlist songs ${songList.length}');
+    songBox.put(song.id.toString(), songModel);
+    return songModel;
+  }).toList();
+
+  return songs;
 }
 
-// Get all songs from the database
-List<SongDBModel> getAllSongs() {
-  final box = Hive.box<SongDBModel>('songs');
-  return box.values.toList();
+Future<void> addToFavorites(FavouriteDBModel favsong) async {
+  final FavBox = await Hive.box<FavouriteDBModel>('favorites');
+  FavBox.put(favsong.id, favsong);
 }
 
-Future<void> addSongsToDataBase(List<SongDBModel> songs) async {
-  final box = Hive.box<SongDBModel>('songs');
-  // await box.clear(); // Clear old entries
-  if (box.isEmpty) {
-    for (var song in songs) {
-      await box.add(song);
+Future<bool> isSongInFavorites(String songId) async {
+  // Open the Hive box where favorite songs are stored
+  final box = await Hive.box<FavouriteDBModel>('favorites');
+
+  // Check if the songId exists in the favorites box
+  return box.containsKey(songId);
+}
+
+Future<void> removeFromFavorites(String id) async {
+  final FavBox = await Hive.box<FavouriteDBModel>('favorites');
+  FavBox.delete(id);
+}
+
+ValueListenable<Box<FavouriteDBModel>> getFavoritesListenable() {
+  return Hive.box<FavouriteDBModel>('favorites').listenable();
+}
+
+Future<void> addToRecentPlayed(RecentDBModel recentSong) async {
+  final recentBox = await Hive.box<RecentDBModel>('recent');
+
+  for (int i = 0; i < recentBox.length; i++) {
+    final song = recentBox.getAt(i);
+    if (song?.id == recentSong.id) {
+      recentBox.deleteAt(i);
+      break;
     }
   }
-  print('songs ${box.values.length}');
+
+  await recentBox.add(recentSong);
+
+  final songs = recentBox.values.toList();
+  songs.insert(0, songs.removeLast());
+
+  await recentBox.clear();
+  await recentBox.addAll(songs);
+}
+
+ValueListenable<Box<RecentDBModel>> getrecentListenable() {
+  return Hive.box<RecentDBModel>('recent').listenable();
+}
+
+// 1
+class SongPlayCounter {
+  Map<String, int> _playCounts = {};
+
+  void incrementPlayCount(String filePath) {
+    _playCounts[filePath] = (_playCounts[filePath] ?? 0) + 1;
+  }
+
+  int getPlayCount(String filePath) {
+    return _playCounts[filePath] ?? 0;
+  }
+}
+
+final songCounter = SongPlayCounter();
+
+void mostlyFunction(String filePath, song) async {
+  songCounter.incrementPlayCount(filePath);
+  print(
+      "Song at $filePath has been played ${songCounter.getPlayCount(filePath)} times.");
+
+  if (songCounter.getPlayCount(filePath) >= 3) {
+    final mostlySong = MostlyPlayedModel(
+      id: song.id.toString(),
+      title: song.title,
+      artist: song.artist ?? 'Unknown Artist',
+      filePath: song.filePath,
+    );
+    final mostlyBox = await Hive.box<MostlyPlayedModel>('mostly');
+    mostlyBox.put(mostlySong.id, mostlySong);
+  }
 }

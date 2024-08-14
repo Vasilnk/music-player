@@ -19,3 +19,19 @@ bgTheme() {
         Color.fromARGB(255, 243, 240, 240),
       ]));
 }
+
+bgTheme1(Color color) {
+  return BoxDecoration(
+    gradient: RadialGradient(
+      center: Alignment.center,
+      radius: 7,
+      colors: [
+        color,
+        // Color.fromARGB(255, 124, 34, 56), // Blue color at the center
+        Color.fromARGB(0, 245, 244, 244),
+      ],
+      stops: [0.0, 1.0],
+    ),
+    borderRadius: BorderRadius.circular(15),
+  );
+}

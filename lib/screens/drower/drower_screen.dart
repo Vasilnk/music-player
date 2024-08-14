@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:play_tune/Settings/privacy_policy.dart';
+import 'package:play_tune/settings/about.dart';
 import 'package:play_tune/utils/color.dart';
 
 class DrawerScreen extends StatelessWidget {
@@ -18,9 +20,16 @@ class DrawerScreen extends StatelessWidget {
       'Privacy Policy',
       'About'
     ];
+    final List Screens = [
+      SizedBox(),
+      SizedBox(),
+      PrivacyPolicyScreen(),
+      AboutPage()
+    ];
     return Drawer(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+        padding:
+            const EdgeInsets.only(bottom: 15, right: 20, left: 20, top: 26),
         decoration: bgTheme(),
         child: Column(
           children: [
@@ -45,7 +54,7 @@ class DrawerScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              height: 50,
+              height: 40,
             ),
             Expanded(
               child: ListView.builder(
@@ -53,24 +62,38 @@ class DrawerScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      leading: Icon(
-                        icons[index],
-                        color: Color.fromARGB(255, 14, 13, 13),
-                        size: 30,
-                      ),
-                      title: Text(
-                        Labels[index],
-                        style: const TextStyle(
-                            color: Color.fromARGB(255, 99, 93, 93),
-                            fontSize: 20),
-                      ),
+                    child: InkWell(
                       onTap: () {},
+                      child: ListTile(
+                        leading: Icon(
+                          icons[index],
+                          color: Color.fromARGB(255, 14, 13, 13),
+                          size: 30,
+                        ),
+                        title: Text(
+                          Labels[index],
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 99, 93, 93),
+                              fontSize: 20),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Screens[index],
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   );
                 },
               ),
             ),
+            SizedBox(
+              height: 30,
+            ),
+            Text('V.1.0.0')
           ],
         ),
       ),

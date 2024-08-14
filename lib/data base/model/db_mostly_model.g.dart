@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'db_model.dart';
+part of 'db_mostly_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class SongDBModelAdapter extends TypeAdapter<SongDBModel> {
+class MostlyPlayedModelAdapter extends TypeAdapter<MostlyPlayedModel> {
   @override
-  final int typeId = 0;
+  final int typeId = 4;
 
   @override
-  SongDBModel read(BinaryReader reader) {
+  MostlyPlayedModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return SongDBModel(
+    return MostlyPlayedModel(
       id: fields[0] as String,
       title: fields[1] as String,
       artist: fields[2] as String,
@@ -25,7 +25,7 @@ class SongDBModelAdapter extends TypeAdapter<SongDBModel> {
   }
 
   @override
-  void write(BinaryWriter writer, SongDBModel obj) {
+  void write(BinaryWriter writer, MostlyPlayedModel obj) {
     writer
       ..writeByte(4)
       ..writeByte(0)
@@ -44,7 +44,7 @@ class SongDBModelAdapter extends TypeAdapter<SongDBModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SongDBModelAdapter &&
+      other is MostlyPlayedModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

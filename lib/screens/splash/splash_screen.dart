@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:play_tune/screens/landing_screen.dart';
+import 'package:play_tune/screens/landing/landing_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

@@ -1,162 +1,72 @@
-// import 'package:flutter/material.dart';
-// import 'package:play_tune/costom_widgets/popUp.dart';
-// import 'package:play_tune/screens/play_screen.dart';
-
-// class SongListTile extends StatelessWidget {
-//   final String songTitle;
-//   final String imageForTile;
-//   final String artist;
-
-//   SongListTile({
-//     required this.songTitle,
-//     required this.imageForTile,
-//     required this.artist,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: EdgeInsets.all(8),
-//       decoration: BoxDecoration(
-//           color: Color.fromARGB(255, 245, 243, 243),
-//           borderRadius: BorderRadius.circular(10)),
-
-//       margin: EdgeInsets.symmetric(vertical: 5), // Add space between tiles
-//       child: InkWell(
-//         onTap: () => Navigator.push(
-//           context,
-//           MaterialPageRoute(
-//             builder: (context) => PlayScreen(
-//               songTitle: songTitle,
-//               imageForTile: imageForTile,
-//               artist: artist,
-//             ),
-//           ),
-//         ),
-//         child: Row(
-//           children: [
-//             ClipRRect(
-//               borderRadius: BorderRadius.circular(10),
-//               child: ConstrainedBox(
-//                 constraints:
-//                     BoxConstraints(maxHeight: 50, maxWidth: 50), // Reduced size
-//                 child: Image.asset(
-//                   imageForTile,
-//                   fit: BoxFit.cover,
-//                 ),
-//               ),
-//             ),
-//             SizedBox(width: 10), // Reduced width between image and text
-//             Expanded(
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(
-//                     songTitle,
-//                     style: TextStyle(
-//                       fontSize: 14,
-//                       fontWeight: FontWeight.bold,
-//                       color: Colors.black,
-//                     ),
-//                   ),
-//                   SizedBox(height: 3),
-//                   Text(
-//                     artist,
-//                     style: TextStyle(
-//                       fontSize: 12,
-//                       color: Colors.grey[600],
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             SizedBox(width: 10), // Reduced width between text and popup button
-//             PopUpScreen(),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// 2
-
 import 'package:flutter/material.dart';
-import 'package:play_tune/screens/play_screen.dart';
+import 'package:on_audio_query/on_audio_query.dart';
+import 'package:play_tune/costom_widgets/popUp.dart';
+import 'package:play_tune/data%20base/function/db_function.dart';
+import 'package:play_tune/data%20base/model/db_recent_model.dart';
+import 'package:play_tune/screens/now_playing/main_part.dart';
 
 class SongListTile extends StatelessWidget {
-  final String songTitle;
-  final String imageForTile;
-  final String artist;
-  final String filePath;
+  final dynamic song;
+  final BuildContext context;
+  final List<dynamic> songs;
+  final int index;
+  // final bool? isFavorite;
+  final dynamic FavouriteSongs; // Adjust the type as needed
 
-  SongListTile({
-    required this.songTitle,
-    required this.imageForTile,
-    required this.artist,
-    required this.filePath,
-  });
+  const SongListTile({
+    Key? key,
+    required this.song,
+    required this.context,
+    required this.songs,
+    required this.index,
+    // this.isFavorite,
+    this.FavouriteSongs,
+    // required bool isfavorite,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    print('file path is $filePath');
-    return Container(
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Color.fromARGB(255, 245, 243, 243),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      margin: EdgeInsets.symmetric(vertical: 5),
-      child: InkWell(
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PlayScreen(
-              songTitle: songTitle,
-              imageForTile: imageForTile,
-              artist: artist,
-              filePath: filePath,
+    return Padding(
+      padding: const EdgeInsets.all(3),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white70,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: ListTile(
+          leading: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: 50, maxWidth: 50),
+            child: QueryArtworkWidget(
+              id: int.parse(song.id),
+              type: ArtworkType.AUDIO,
+              nullArtworkWidget: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Image.asset('assets/images/musicnoteImage.jpg'),
+              ),
             ),
           ),
-        ),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxHeight: 50, maxWidth: 50),
-                child: Image.asset(
-                  imageForTile,
-                  fit: BoxFit.cover,
+          title: Text(song.title),
+          subtitle: Text(song.artist),
+          trailing: PopUp(song: song),
+          onTap: () async {
+            FocusScope.of(context).unfocus();
+            final recentSong = RecentDBModel(
+              id: song.id.toString(),
+              title: song.title,
+              artist: song.artist ?? 'Unknown Artist',
+              filePath: song.filePath,
+            );
+            addToRecentPlayed(recentSong);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NowPlayingScreen(
+                  songs: songs,
+                  initialIndex: index,
                 ),
               ),
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    filePath,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 3),
-                  Text(
-                    artist,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: 10),
-          ],
+            );
+          },
         ),
       ),
     );

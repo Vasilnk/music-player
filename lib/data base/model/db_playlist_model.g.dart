@@ -1,41 +1,38 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'db_model.dart';
+part of 'db_playlist_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class SongDBModelAdapter extends TypeAdapter<SongDBModel> {
+class PlayListModelAdapter extends TypeAdapter<PlayListModel> {
   @override
-  final int typeId = 0;
+  final int typeId = 3;
 
   @override
-  SongDBModel read(BinaryReader reader) {
+  PlayListModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return SongDBModel(
+    return PlayListModel(
       id: fields[0] as String,
-      title: fields[1] as String,
-      artist: fields[2] as String,
-      filePath: fields[3] as String,
+      name: fields[1] as String,
+      songIds: (fields[2] as List).cast<String>(),
     );
   }
 
   @override
-  void write(BinaryWriter writer, SongDBModel obj) {
+  void write(BinaryWriter writer, PlayListModel obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.title)
+      ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.artist)
-      ..writeByte(3)
-      ..write(obj.filePath);
+      ..write(obj.songIds);
   }
 
   @override
@@ -44,7 +41,7 @@ class SongDBModelAdapter extends TypeAdapter<SongDBModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SongDBModelAdapter &&
+      other is PlayListModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

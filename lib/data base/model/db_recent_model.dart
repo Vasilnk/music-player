@@ -1,8 +1,8 @@
 import 'package:hive/hive.dart';
-part 'db_model.g.dart';
+part 'db_recent_model.g.dart';
 
-@HiveType(typeId: 0)
-class SongDBModel {
+@HiveType(typeId: 2)
+class RecentDBModel {
   @HiveField(0)
   final String id;
 
@@ -15,7 +15,7 @@ class SongDBModel {
   @HiveField(3)
   final String filePath;
 
-  SongDBModel(
+  RecentDBModel(
       {required this.id,
       required this.title,
       required this.artist,
