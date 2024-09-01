@@ -35,7 +35,7 @@ class PlaylistSongs extends StatelessWidget {
                 context: context,
                 songs: songs,
                 index: index,
-                // isfavorite: false,
+                playlist: true,
               );
             },
           );

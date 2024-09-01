@@ -7,11 +7,10 @@ import 'package:play_tune/screens/play_list/add_dialog.dart';
 class ControlPortion extends StatefulWidget {
   final AudioPlayer audioPlayer;
   final bool isPlaying;
-
   final VoidCallback togglePlayPause;
   final VoidCallback playNext;
   final VoidCallback playPrevious;
-  final song;
+  final dynamic song;
 
   const ControlPortion({
     required this.audioPlayer,
@@ -28,11 +27,15 @@ class ControlPortion extends StatefulWidget {
 
 class _ControlPortionState extends State<ControlPortion> {
   bool isFavorite = false;
+  bool isShuffling = false;
+  bool isRepeating = false;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     checkIfFavorite();
+    _listenToShuffleChanges();
+    _listenToLoopModeChanges();
   }
 
   void checkIfFavorite() async {
@@ -40,6 +43,22 @@ class _ControlPortionState extends State<ControlPortion> {
         await isSongInFavorites(widget.song.id.toString());
     setState(() {
       isFavorite = isAlreadyFavorite;
+    });
+  }
+
+  void _listenToShuffleChanges() {
+    widget.audioPlayer.shuffleModeEnabledStream.listen((shuffleEnabled) {
+      setState(() {
+        isShuffling = shuffleEnabled;
+      });
+    });
+  }
+
+  void _listenToLoopModeChanges() {
+    widget.audioPlayer.loopModeStream.listen((loopMode) {
+      setState(() {
+        isRepeating = loopMode == LoopMode.one;
+      });
     });
   }
 
@@ -68,32 +87,20 @@ class _ControlPortionState extends State<ControlPortion> {
                     );
                     addToFavorites(favoriteSong);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Added to favorites'),
-                      ),
+                      SnackBar(content: Text('Added to favorites')),
                     );
                   } else {
                     removeFromFavorites(widget.song.id);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Removed from favorites'),
-                      ),
+                      SnackBar(content: Text('Removed from favorites')),
                     );
                   }
                 });
               },
             ),
             IconButton(
-              icon: Icon(
-                Icons.playlist_add,
-                size: 30,
-              ),
+              icon: Icon(Icons.playlist_add, size: 30),
               onPressed: () {
-                setState(() {
-                  AddToPlaylistDialog(
-                    songId: widget.song.id,
-                  );
-                });
                 showDialog(
                   context: context,
                   builder: (context) =>
@@ -103,9 +110,7 @@ class _ControlPortionState extends State<ControlPortion> {
             ),
           ],
         ),
-        SizedBox(
-          height: 20,
-        ),
+        SizedBox(height: 20),
         StreamBuilder<Duration>(
           stream: widget.audioPlayer.positionStream,
           builder: (context, snapshot) {
@@ -134,13 +139,26 @@ class _ControlPortionState extends State<ControlPortion> {
             );
           },
         ),
-        SizedBox(
-          height: 20,
-        ),
+        SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.shuffle, size: 30)),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  isShuffling = !isShuffling;
+                  widget.audioPlayer.setShuffleModeEnabled(isShuffling);
+                  if (isShuffling) {
+                    widget.audioPlayer.shuffle();
+                  }
+                });
+              },
+              icon: Icon(
+                Icons.shuffle,
+                size: 30,
+                color: isShuffling ? Colors.blue : null,
+              ),
+            ),
             IconButton(
               icon: Icon(Icons.skip_previous, size: 50),
               onPressed: widget.playPrevious,
@@ -161,7 +179,21 @@ class _ControlPortionState extends State<ControlPortion> {
               icon: Icon(Icons.skip_next, size: 50),
               onPressed: widget.playNext,
             ),
-            IconButton(onPressed: () {}, icon: Icon(Icons.repeat, size: 30)),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  isRepeating = !isRepeating;
+                  widget.audioPlayer.setLoopMode(
+                    isRepeating ? LoopMode.one : LoopMode.off,
+                  );
+                });
+              },
+              icon: Icon(
+                Icons.repeat,
+                size: 30,
+                color: isRepeating ? Colors.blue : null,
+              ),
+            ),
           ],
         ),
       ],

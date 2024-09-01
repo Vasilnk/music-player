@@ -14,37 +14,34 @@ class RecentSongs extends StatelessWidget {
         final recentSongs = box.values.toList();
 
         return recentSongs.isNotEmpty
-            ? Expanded(
-                child: ListView(children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      '  Recently Played',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+            ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    '  Recently Played',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
                   ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: recentSongs.length,
-                    itemBuilder: (context, index) {
-                      final song = recentSongs[index];
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: recentSongs.length,
+                  itemBuilder: (context, index) {
+                    final song = recentSongs[index];
 
-                      return SongListTile(
-                        context: context,
-                        index: index,
-                        song: song,
-                        songs: recentSongs,
-                        // isfavorite: false,
-                      );
-                    },
-                  )
-                ]),
-              )
+                    return SongListTile(
+                      context: context,
+                      index: index,
+                      song: song,
+                      songs: recentSongs,
+                    );
+                  },
+                )
+              ])
             : SizedBox();
       },
     );

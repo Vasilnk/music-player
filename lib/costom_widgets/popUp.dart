@@ -5,11 +5,8 @@ import 'package:play_tune/screens/play_list/add_dialog.dart';
 
 class PopUp extends StatefulWidget {
   final dynamic song;
-
-  const PopUp({
-    Key? key,
-    required this.song,
-  }) : super(key: key);
+  final playlist;
+  const PopUp({Key? key, required this.song, this.playlist}) : super(key: key);
 
   @override
   _PopUpState createState() => _PopUpState();
@@ -35,7 +32,7 @@ class _PopUpState extends State<PopUp> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
-      color: const Color.fromARGB(255, 202, 174, 174),
+      color: const Color.fromARGB(255, 233, 231, 231),
       itemBuilder: (context) {
         return [
           PopupMenuItem(
@@ -81,19 +78,25 @@ class _PopUpState extends State<PopUp> {
           PopupMenuItem(
             child: Row(
               children: [
-                const Icon(Icons.playlist_add_sharp),
+                Icon(widget.playlist == true
+                    ? Icons.delete
+                    : Icons.playlist_add_sharp),
                 const SizedBox(width: 8),
-                const Text('Add to playlist'),
+                widget.playlist == true
+                    ? Text('Remove Song')
+                    : Text('Add to playlist'),
               ],
             ),
             onTap: () {
-              Future.microtask(() {
+              if (widget.playlist == true) {
+                removeFromPlaylist(widget.song.id);
+              } else {
                 showDialog(
                   context: context,
                   builder: (context) =>
                       AddToPlaylistDialog(songId: widget.song.id),
                 );
-              });
+              }
             },
           ),
         ];

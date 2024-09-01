@@ -19,12 +19,14 @@ class HomeScreen extends StatelessWidget {
         title: 'Music Player',
         scaffoldKey: _scaffoldKey,
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          HomeGridItems(),
-          RecentSongs(),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            HomeGridItems(),
+            RecentSongs(),
+          ],
+        ),
       ),
     );
   }

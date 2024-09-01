@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:play_tune/costom_widgets/appbar.dart';
 import 'package:play_tune/data%20base/function/db_function.dart';
+import 'package:play_tune/data%20base/model/db_recent_model.dart';
 import 'package:play_tune/screens/now_playing/control_portion.dart';
 import 'package:play_tune/screens/now_playing/song_info.dart';
 import 'package:play_tune/utils/color.dart';
@@ -21,21 +22,47 @@ class NowPlayingScreen extends StatefulWidget {
 
 class _NowPlayingScreenState extends State<NowPlayingScreen> {
   late AudioPlayer _audioPlayer;
+  late ConcatenatingAudioSource _playlist;
   late int _currentIndex;
   bool _isPlaying = true;
+
   @override
   void initState() {
     super.initState();
     _audioPlayer = AudioPlayer();
+    _playlist = ConcatenatingAudioSource(
+      children: widget.songs.map((song) {
+        return AudioSource.uri(Uri.parse(song.filePath));
+      }).toList(),
+    );
     _currentIndex = widget.initialIndex;
+
+    _audioPlayer.setAudioSource(_playlist, initialIndex: _currentIndex);
     _playSong();
+
+    _audioPlayer.currentIndexStream.listen((index) {
+      if (index != null) {
+        setState(() {
+          _currentIndex = index;
+          _playSong();
+        });
+      }
+    });
+    mostlyFunction(widget.songs[_currentIndex].filePath.toString(),
+        widget.songs[_currentIndex]);
   }
 
   Future<void> _playSong() async {
-    await _audioPlayer.setUrl(widget.songs[_currentIndex].filePath);
     _audioPlayer.play();
-    mostlyFunction(widget.songs[_currentIndex].filePath.toString(),
-        widget.songs[_currentIndex]);
+    final song = widget.songs[_currentIndex];
+
+    final recentSong = RecentDBModel(
+      id: song.id.toString(),
+      title: song.title,
+      artist: song.artist ?? 'Unknown Artist',
+      filePath: song.filePath,
+    );
+    await addToRecentPlayed(recentSong);
   }
 
   void _togglePlayPause() {
@@ -46,21 +73,11 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   }
 
   void _playNext() {
-    if (_currentIndex < widget.songs.length - 1) {
-      setState(() {
-        _currentIndex++;
-        _playSong();
-      });
-    }
+    _audioPlayer.seekToNext();
   }
 
   void _playPrevious() {
-    if (_currentIndex > 0) {
-      setState(() {
-        _currentIndex--;
-        _playSong();
-      });
-    }
+    _audioPlayer.seekToPrevious();
   }
 
   @override
@@ -72,9 +89,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Now Playing',
-      ),
+      appBar: CustomAppBar(title: 'Now Playing'),
       body: Container(
         padding: EdgeInsets.all(20),
         decoration: bgTheme(),
@@ -83,12 +98,13 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
             SongInfo(song: widget.songs[_currentIndex]),
             SizedBox(height: 10),
             ControlPortion(
-                audioPlayer: _audioPlayer,
-                isPlaying: _isPlaying,
-                togglePlayPause: _togglePlayPause,
-                playNext: _playNext,
-                playPrevious: _playPrevious,
-                song: widget.songs[_currentIndex]),
+              audioPlayer: _audioPlayer,
+              isPlaying: _isPlaying,
+              togglePlayPause: _togglePlayPause,
+              playNext: _playNext,
+              playPrevious: _playPrevious,
+              song: widget.songs[_currentIndex],
+            ),
           ],
         ),
       ),

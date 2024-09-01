@@ -17,18 +17,22 @@ class MostlyPlayedScreen extends StatelessWidget {
         builder: (context, Box<MostlyPlayedModel> box, _) {
           final mostlyPlayedSongs = box.values.toList();
 
-          return ListView.builder(
-            itemCount: mostlyPlayedSongs.length,
-            itemBuilder: (context, index) {
-              final song = mostlyPlayedSongs[index];
-              return SongListTile(
-                context: context,
-                index: index,
-                song: song,
-                songs: mostlyPlayedSongs,
-              );
-            },
-          );
+          if (mostlyPlayedSongs.isEmpty) {
+            return Center(child: Text('No Mostly Played Songs'));
+          } else {
+            return ListView.builder(
+              itemCount: mostlyPlayedSongs.length,
+              itemBuilder: (context, index) {
+                final song = mostlyPlayedSongs[index];
+                return SongListTile(
+                  context: context,
+                  index: index,
+                  song: song,
+                  songs: mostlyPlayedSongs,
+                );
+              },
+            );
+          }
         },
       ),
     );

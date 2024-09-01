@@ -35,7 +35,6 @@ class _FavoriteSongsScreenState extends State<FavoriteSongsScreen> {
                     index: index,
                     song: song,
                     songs: favoriteSongs,
-                    // isfavorite: isFavorite,
                   );
                 },
               );

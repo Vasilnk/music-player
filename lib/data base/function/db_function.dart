@@ -42,8 +42,7 @@ Future<void> addToFavorites(FavouriteDBModel favsong) async {
 }
 
 Future<bool> isSongInFavorites(String songId) async {
-  final box = await Hive.box<FavouriteDBModel>('favorites');
-
+  final box = await Hive.openBox<FavouriteDBModel>('favorites');
   return box.containsKey(songId);
 }
 
@@ -72,6 +71,10 @@ Future<void> addToRecentPlayed(RecentDBModel recentSong) async {
   final songs = recentBox.values.toList();
   songs.insert(0, songs.removeLast());
 
+  if (songs.length > 10) {
+    songs.removeLast();
+  }
+
   await recentBox.clear();
   await recentBox.addAll(songs);
 }
@@ -97,8 +100,6 @@ final songCounter = SongPlayCounter();
 
 void mostlyFunction(String filePath, song) async {
   songCounter.incrementPlayCount(filePath);
-  print(
-      "Song at $filePath has been played ${songCounter.getPlayCount(filePath)} times.");
 
   if (songCounter.getPlayCount(filePath) >= 3) {
     final mostlySong = MostlyPlayedModel(
@@ -110,4 +111,10 @@ void mostlyFunction(String filePath, song) async {
     final mostlyBox = await Hive.box<MostlyPlayedModel>('mostly');
     mostlyBox.put(mostlySong.id, mostlySong);
   }
+}
+
+//remove from playlist
+Future<void> removeFromPlaylist(String id) async {
+  final Box = await Hive.box<SongDBModel>('songs');
+  Box.delete(id);
 }

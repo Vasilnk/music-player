@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:play_tune/costom_widgets/appbar.dart';
 
 class AboutPage extends StatelessWidget {
@@ -7,13 +8,54 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: CustomAppBar(title: 'About Us'),
-        body: Padding(
-          padding: const EdgeInsets.all(25),
-          child: Text(
-            '''Introducing our innovative music player app, designed to revolutionize your listening experience. Our app combines cutting-edge technology with an intuitive interface,  offering seamless navigation through your music library. Enjoy personalized playlists, superiorsound quality, and effortless organization of your favorite tracks. Whether you're a music enthusiast or a casual listener, our app caters to your every need. Elevate your music journey with our feature-rich, user-centric music player app.''',
-            style: TextStyle(fontSize: 20),
-          ),
-        ));
+      backgroundColor: Colors.white,
+      appBar: CustomAppBar(
+        title: 'About Us',
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(25),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Introducing Our Music Player App',
+                style: GoogleFonts.oswald(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 119, 50, 50),
+                )),
+            const SizedBox(height: 15),
+            Text(
+              'Our innovative music player app is designed to revolutionize your listening experience. Combining cutting-edge technology with an intuitive interface, our app offers seamless navigation through your music library.',
+              style: GoogleFonts.roboto(
+                fontSize: 18,
+                height: 1.5,
+                fontStyle: FontStyle.italic,
+                color: Colors.black54,
+              ),
+            ),
+            const SizedBox(height: 15),
+            Text(
+              'Enjoy personalized playlists, superior sound quality, and effortless organization of your favorite tracks. Whether you\'re a music enthusiast or a casual listener, our app caters to your every need.',
+              style: GoogleFonts.roboto(
+                fontSize: 18,
+                height: 1.5,
+                fontStyle: FontStyle.italic,
+                color: Colors.black54,
+              ),
+            ),
+            const SizedBox(height: 15),
+            Text(
+              'Elevate your music journey with our feature-rich, user-centric music player app.',
+              style: GoogleFonts.roboto(
+                fontSize: 18,
+                height: 1.5,
+                fontStyle: FontStyle.italic,
+                color: Colors.black54,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

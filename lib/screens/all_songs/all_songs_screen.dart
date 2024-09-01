@@ -8,6 +8,7 @@ import 'package:play_tune/screens/all_songs/search_song.dart';
 class AllSongsScreen extends StatefulWidget {
   final bool? bool1;
   AllSongsScreen(this.bool1);
+
   @override
   _AllSongsScreenState createState() => _AllSongsScreenState();
 }
@@ -17,12 +18,21 @@ class _AllSongsScreenState extends State<AllSongsScreen> {
   List<SongDBModel> _filteredSongs = [];
   TextEditingController searchController = TextEditingController();
   FocusNode searchFocusNode = FocusNode();
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadSongs();
+    _showLoadingIndicator();
     searchController.addListener(filterSongs);
+  }
+
+  Future<void> _showLoadingIndicator() async {
+    await Future.delayed(Duration(seconds: 1));
+    await _loadSongs();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> _loadSongs() async {
@@ -58,36 +68,38 @@ class _AllSongsScreenState extends State<AllSongsScreen> {
       appBar: CustomAppBar(
         title: 'All Songs',
       ),
-      body: Column(
-        children: [
-          widget.bool1 == true
-              ? SearchBarPortion(
-                  controller: searchController,
-                  focusNode: searchFocusNode,
-                )
-              : SizedBox(),
-          Expanded(
-            child: _filteredSongs.isNotEmpty
-                ? ListView.builder(
-                    itemCount: _filteredSongs.length,
-                    itemBuilder: (context, index) {
-                      final song = _filteredSongs[index];
-
-                      return SongListTile(
-                        song: song,
-                        context: context,
-                        songs: _filteredSongs,
-                        index: index,
-                        // isfavorite: false
-                      );
-                    },
-                  )
-                : Center(
-                    child: Text("No result ' ${searchController.text} '"),
-                  ),
-          ),
-        ],
-      ),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+              children: [
+                widget.bool1 == true
+                    ? SearchBarPortion(
+                        controller: searchController,
+                        focusNode: searchFocusNode,
+                      )
+                    : SizedBox(),
+                Expanded(
+                  child: _filteredSongs.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: _filteredSongs.length,
+                          itemBuilder: (context, index) {
+                            final song = _filteredSongs[index];
+                            return SongListTile(
+                              song: song,
+                              context: context,
+                              songs: _filteredSongs,
+                              index: index,
+                            );
+                          },
+                        )
+                      : Center(
+                          child: Text("No result ' ${searchController.text} '"),
+                        ),
+                ),
+              ],
+            ),
     );
   }
 }

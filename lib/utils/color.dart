@@ -27,7 +27,6 @@ bgTheme1(Color color) {
       radius: 7,
       colors: [
         color,
-        // Color.fromARGB(255, 124, 34, 56), // Blue color at the center
         Color.fromARGB(0, 245, 244, 244),
       ],
       stops: [0.0, 1.0],

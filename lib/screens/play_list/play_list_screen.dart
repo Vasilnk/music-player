@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:play_tune/costom_widgets/appbar.dart';
-
 import 'package:play_tune/data%20base/model/db_playlist_model.dart';
-
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:play_tune/screens/play_list/create_dialog.dart';
+import 'package:play_tune/screens/play_list/edit_playlist.dart';
 import 'package:play_tune/screens/play_list/playlist_songs.dart';
 
 class PlaylistsScreen extends StatelessWidget {
@@ -14,7 +12,7 @@ class PlaylistsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        title: 'Playlists',
+        title: 'Play Lists',
       ),
       body: ValueListenableBuilder(
         valueListenable: Hive.box<PlayListModel>('playlists').listenable(),
@@ -33,7 +31,7 @@ class PlaylistsScreen extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 241, 231, 230),
+                      color: Color.fromARGB(255, 175, 108, 114),
                       borderRadius: BorderRadius.circular(10)),
                   child: ListTile(
                     title: Text(
@@ -41,32 +39,81 @@ class PlaylistsScreen extends StatelessWidget {
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    trailing: IconButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text('Delete Playlist'),
-                            content: Text(
-                                'Are you sure you want to delete this playlist?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  // Delete the playlist from Hive
-                                  box.delete(key);
-                                  Navigator.of(context).pop(); // Close dialog
-                                },
-                                child: Text('Delete'),
-                              ),
-                            ],
+                    trailing: PopupMenuButton(
+                      color: Color.fromARGB(255, 207, 178, 178),
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                            onTap: () {
+                              Future.microtask(() {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => EditPlaylistDialog(
+                                    playlist: playlist,
+                                    playlistKey: key,
+                                  ),
+                                );
+                              });
+                            },
+                            child: Row(
+                              children: [
+                                Icon(Icons.edit),
+                                const SizedBox(width: 8),
+                                Text('Edit Playlist'),
+                              ],
+                            ),
                           ),
-                        );
+                          PopupMenuItem(
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete),
+                                const SizedBox(width: 8),
+                                Text('Delete playlist'),
+                              ],
+                            ),
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  backgroundColor:
+                                      Color.fromARGB(255, 228, 223, 223),
+                                  title: Text(
+                                    'Delete Playlist',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            Color.fromARGB(255, 74, 68, 136)),
+                                  ),
+                                  content: Text(
+                                      'Are you sure you want to delete this playlist?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        box.delete(key);
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text(
+                                        'Delete',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ];
                       },
                       icon: Icon(Icons.more_vert),
                     ),

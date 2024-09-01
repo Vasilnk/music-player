@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:play_tune/utils/color.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -16,25 +17,28 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       centerTitle: true,
       leading: scaffoldKey != null
-          ? IconButton(
-              onPressed: () {
-                scaffoldKey!.currentState?.openDrawer();
-              },
-              icon: Icon(
-                Icons.menu_rounded,
-                size: 35,
-              ))
+          ? Row(
+              children: [
+                SizedBox(
+                  width: 5,
+                ),
+                IconButton(
+                    onPressed: () {
+                      scaffoldKey!.currentState?.openDrawer();
+                    },
+                    icon: Icon(
+                      Icons.menu_rounded,
+                      size: 35,
+                    )),
+              ],
+            )
           : Icon(Icons.music_note),
-      backgroundColor:
-          //  Color.fromARGB(255, 243, 235, 235),
-          Colors.white,
+      backgroundColor: Colors.white,
       title: Text(
         title,
-        style: TextStyle(
-            color:
-                //  Color.fromARGB(255, 78, 13, 13),
-                Colors.black,
-            fontWeight: FontWeight.bold),
+        style: GoogleFonts.pacifico(
+          color: Colors.black,
+        ),
       ),
     );
   }

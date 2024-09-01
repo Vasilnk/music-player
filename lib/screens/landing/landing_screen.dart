@@ -51,7 +51,7 @@ class _LandingScreenState extends State<LandingScreen> {
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: Padding(
         padding:
-            const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 10),
+            const EdgeInsets.only(left: 18, right: 18, bottom: 10, top: 10),
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -62,22 +62,23 @@ class _LandingScreenState extends State<LandingScreen> {
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home),
-                  backgroundColor: Color.fromARGB(255, 177, 75, 75),
+                  backgroundColor: Color.fromARGB(255, 78, 53, 189),
                   label: '',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.search),
-                  backgroundColor: Color.fromARGB(255, 177, 75, 75),
+                  backgroundColor: Color.fromARGB(255, 78, 53, 189),
+                  //  Color.fromARGB(255, 177, 75, 75),
                   label: '',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.favorite_rounded),
-                  backgroundColor: Color.fromARGB(255, 177, 75, 75),
+                  backgroundColor: Color.fromARGB(255, 78, 53, 189),
                   label: '',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.playlist_add_check),
-                  backgroundColor: Color.fromARGB(255, 177, 75, 75),
+                  backgroundColor: Color.fromARGB(255, 78, 53, 189),
                   label: '',
                 ),
               ],

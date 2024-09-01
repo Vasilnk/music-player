@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class SongInfo extends StatelessWidget {
@@ -31,7 +32,10 @@ class SongInfo extends StatelessWidget {
           SizedBox(height: 20),
           Text(song.title, style: TextStyle(fontSize: 24)),
           Text(song.artist == '<unknown>' ? 'Unknown Artist' : song.artist,
-              style: TextStyle(fontSize: 18)),
+              style: GoogleFonts.roboto(
+                fontSize: 18,
+                fontStyle: FontStyle.italic,
+              )),
         ],
       ),
     );
