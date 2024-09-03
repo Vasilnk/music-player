@@ -68,10 +68,11 @@ class PrivacyPolicyScreen extends StatelessWidget {
       padding: const EdgeInsets.only(top: 20, bottom: 10),
       child: Text(
         title,
-        style: GoogleFonts.oswald(
+        style: TextStyle(
+          fontFamily: 'Oswald',
           fontWeight: FontWeight.bold,
           fontSize: 22,
-          color: Color.fromARGB(255, 56, 45, 119),
+          color: Color.fromARGB(255, 119, 50, 50),
         ),
       ),
     );
@@ -82,10 +83,11 @@ class PrivacyPolicyScreen extends StatelessWidget {
       padding: const EdgeInsets.only(top: 15, bottom: 5),
       child: Text(
         title,
-        style: GoogleFonts.playfairDisplay(
+        style: TextStyle(
+          fontFamily: 'SUSE',
           fontWeight: FontWeight.bold,
-          fontSize: 18,
-          color: Color.fromARGB(255, 119, 50, 50),
+          fontSize: 22,
+          color: Color.fromARGB(255, 56, 45, 119),
         ),
       ),
     );

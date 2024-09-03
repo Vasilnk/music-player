@@ -104,7 +104,7 @@ class DrawerScreen extends StatelessWidget {
             ),
             const Spacer(),
             const Text(
-              'V.1.0.0',
+              'V.1.1.0',
               style: TextStyle(fontSize: 14),
             ),
           ],
@@ -126,6 +126,7 @@ class DrawerScreen extends StatelessWidget {
   }
 
   void shareApp() {
-    Share.share('Check out this app: https://www.amazon.com/sample_link');
+    Share.share(
+        'Get Play Tune from the Amazon Appstore. Check it out - https://www.amazon.com/dp/B0D2YX9SHL/ref=apps_sf_sta ');
   }
 }

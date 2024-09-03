@@ -36,7 +36,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.white,
       title: Text(
         title,
-        style: GoogleFonts.pacifico(
+        style: TextStyle(
+          fontFamily: 'Pacifico',
           color: Colors.black,
         ),
       ),

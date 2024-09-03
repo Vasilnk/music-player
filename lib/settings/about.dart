@@ -18,7 +18,8 @@ class AboutPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Introducing Our Music Player App',
-                style: GoogleFonts.oswald(
+                style: TextStyle(
+                  fontFamily: 'Oswald',
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 119, 50, 50),
